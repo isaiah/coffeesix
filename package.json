@@ -1,0 +1,28 @@
+{
+  "name": "lavascript",
+  "version": "0.0.1",
+  "description": "ES6 for coffee",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start --run-once"
+  },
+  "keywords": [
+    "es6"
+  ],
+  "author": "isaiah",
+  "license": "MIT",
+  "devDependencies": {
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "^0.1.5",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-requirejs": "^0.2.2",
+    "karma-traceur-preprocessor": "git://github.com/vojtajina/karma-traceur-preprocessor#traceur-as-peer",
+    "requirejs": "^2.1.13",
+    "traceur": "0.0.42"
+  },
+  "dependencies": {
+    "di": "~2.0.0-pre-6",
+    "es6-shim": "~0.9.3"
+  }
+}
