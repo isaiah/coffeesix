@@ -15,7 +15,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'test-main.js',
-      {pattern: 'test/**/*.spec.js', included: false},
+      {pattern: 'test/**/*.js', included: false},
       {pattern: 'node_modules/es6-shim/es6-shim.js', included: false},
       {pattern: 'node_modules/di/src/**/*.js', included: false}
     ],
@@ -31,9 +31,8 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'node_modules/di/src/**/*.js': ['traceur'],
-      'test/**/*.spec.js': ['traceur']
+      'test/**/*.js': ['traceur']
     },
-
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

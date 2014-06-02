@@ -22,18 +22,15 @@ require.config({
   },
   map: {
     '*': {
-      'rtts-assert': 'node_modules/rtts-assert/src/assert',
       'di': 'node_modules/di/src/index',
       'di/testing': 'node_modules/di/src/testing',
-      'watchtower': 'node_modules/watchtower/src/index',
-      'expressionist': 'node_modules/expressionist/src/index',
-      'templating': 'src/index',
-      'compile_ng_template': 'src/loader/requirejs_html',
     }
   },
 
   // dynamically load all test files
-  deps: allTestFiles.concat(['node_modules/es6-shim/es6-shim']),
+  deps: allTestFiles.concat([
+    'test/matchers'
+  ]),//.concat(['node_modules/es6-shim/es6-shim']),
 
   // we have to kickoff jasmine, as it is asynchronous
   callback: window.__karma__.start
