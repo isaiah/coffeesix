@@ -212,6 +212,17 @@ exports.Base = class Base
       answer = answer.concat fragments
     answer
 
+#### Import
+
+# The import is the expression that import an package or local file
+exports.Require = class Require extends Base
+  constructor: (source) ->
+
+  children: ['value']
+
+  compileNode: (o) ->
+    console.info("test")
+
 #### Block
 
 # The block is the list of expressions that forms the body of an

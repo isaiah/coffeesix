@@ -113,6 +113,7 @@ grammar =
     o 'Switch'
     o 'Class'
     o 'Throw'
+    o 'Require'
   ]
 
   # An indented block of expressions. Note that the [Rewriter](rewriter.html)
@@ -147,15 +148,16 @@ grammar =
     o 'BOOL',                                   -> new Bool $1
   ]
 
-  Imports: [
-    o 'Value = REQUIRE Value'
-  ]
-
   # Assignment of a variable, property, or index to a value.
   Assign: [
     o 'Assignable = Expression',                -> new Assign $1, $3
     o 'Assignable = TERMINATOR Expression',     -> new Assign $1, $4
     o 'Assignable = INDENT Expression OUTDENT', -> new Assign $1, $4
+  ]
+
+  # Import of module
+  Require: [
+    o 'REQUIRE Value',        -> new Require $1
   ]
 
   # Assignment when it happens within an object literal. The difference from
