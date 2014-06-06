@@ -1,4 +1,5 @@
 jison = require "jison"
+fs = require("fs")
 
 a = ->
   console.info "hello"
@@ -7,6 +8,9 @@ b = "foo"
 
 c = "#{b} bar"
 
-class Foo
-  constructor: (foo) ->
-    @foo = foo
+class Greet
+  constructor: (world) ->
+    @world = world
+
+  hello: (x) ->
+    "#{x} #{@world}"

@@ -1118,7 +1118,7 @@ exports.Class = class Class extends Base
 
     @hoistDirectivePrologue()
     @setContext name
-    @walkBody name, o
+    #@walkBody name, o
     @ensureConstructor name
     @addBoundFunctions o
     @body.spaced = yes
@@ -1132,9 +1132,10 @@ exports.Class = class Class extends Base
 
     @body.expressions.unshift @directives...
 
-    klass = new Parens new Call func, args
-    klass = new Assign @variable, klass if @variable
-    klass.compileToFragments o
+    #klass = new Parens new Call func, args
+    #klass = new Assign @variable, klass if @variable
+    #klass.compileToFragments o
+    new Assign(new Code(args, Block.wrap([@body])))
 
 #### Assign
 
