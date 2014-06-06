@@ -1036,7 +1036,8 @@ exports.Class = class Class extends Base
     exprs = while assign = props.shift()
       if assign instanceof Assign
         base = assign.variable.base
-        delete assign.context
+        #delete assign.context
+        assign.context = 'class'
         func = assign.value
         if base.value is 'constructor'
           if @ctor
@@ -1052,7 +1053,7 @@ exports.Class = class Class extends Base
           if assign.variable.this
             func.static = yes
           else
-            assign.variable = new Value(new Literal(name), [(new Access new Literal 'prototype'), new Access base])
+            assign.variable = base
             if func instanceof Code and func.bound
               @boundFuncs.push base
               func.bound = no
@@ -1118,7 +1119,7 @@ exports.Class = class Class extends Base
 
     @hoistDirectivePrologue()
     @setContext name
-    #@walkBody name, o
+    @walkBody name, o
     @ensureConstructor name
     @addBoundFunctions o
     @body.spaced = yes
@@ -1134,8 +1135,9 @@ exports.Class = class Class extends Base
 
     #klass = new Parens new Call func, args
     #klass = new Assign @variable, klass if @variable
-    #klass.compileToFragments o
-    new Assign(new Code(args, Block.wrap([@body])))
+    answer = []
+    answer = answer.concat @makeCode("class "), @variable.compileToFragments(o), @makeCode(" {\n")
+    answer.concat @body.compileToFragments(o), @makeCode('\n}')
 
 #### Assign
 
@@ -1186,6 +1188,7 @@ exports.Assign = class Assign extends Base
       @value.name  = match[3] ? match[4] ? match[5]
     val = @value.compileToFragments o, LEVEL_LIST
     return (compiledName.concat @makeCode(": "), val) if @context is 'object'
+    return (compiledName.concat @makeCode(""), val) if @context is 'class'
     answer = compiledName.concat @makeCode(" #{ @context or '=' } "), val
     if o.level <= LEVEL_LIST then answer else @wrapInBraces answer
 
@@ -1397,8 +1400,12 @@ exports.Code = class Code extends Base
       node.error "multiple parameters named '#{name}'" if name in uniqs
       uniqs.push name
     @body.makeReturn() unless wasEmpty or @noReturn
-    code  = 'function'
-    code  += ' ' + @name if @ctor
+    if @ctor
+      code = 'contructor'
+    else if @static
+      code = ''
+    else
+      code = 'function'
     code  += '('
     answer = [@makeCode(code)]
     for p, i in params

@@ -14,3 +14,6 @@ class Greet
 
   hello: (x) ->
     "#{x} #{@world}"
+
+  @bye: (y) ->
+    "#{y} #{world}"
