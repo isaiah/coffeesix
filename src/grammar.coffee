@@ -87,6 +87,7 @@ grammar =
   Line: [
     o 'Expression'
     o 'Statement'
+    o 'Require'
   ]
 
   # Pure statements which cannot be expressions.
@@ -113,7 +114,6 @@ grammar =
     o 'Switch'
     o 'Class'
     o 'Throw'
-    o 'Require'
   ]
 
   # An indented block of expressions. Note that the [Rewriter](rewriter.html)
@@ -155,11 +155,6 @@ grammar =
     o 'Assignable = INDENT Expression OUTDENT', -> new Assign $1, $4
   ]
 
-  # Import of module
-  Require: [
-    o 'REQUIRE Value',        -> new Require $1
-  ]
-
   # Assignment when it happens within an object literal. The difference from
   # the ordinary **Assign** is that these allow numbers and strings as keys.
   AssignObj: [
@@ -180,6 +175,11 @@ grammar =
   Return: [
     o 'RETURN Expression',                      -> new Return $2
     o 'RETURN',                                 -> new Return
+  ]
+
+  # Import of module
+  Require: [
+    o 'Assignable = REQUIRE Value',             -> new Require $1, $4
   ]
 
   # A block comment.

@@ -1,4 +1,4 @@
-jison = require('jison')
+jison = require "jison"
 
 a = ->
   console.info "hello"

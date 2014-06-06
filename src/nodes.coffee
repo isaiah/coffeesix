@@ -216,12 +216,13 @@ exports.Base = class Base
 
 # The import is the expression that import an package or local file
 exports.Require = class Require extends Base
-  constructor: (source) ->
+  constructor: (@variable, @source) ->
 
-  children: ['value']
+  children: ['variable', 'source']
 
   compileNode: (o) ->
-    console.info("test")
+    answer = []
+    answer.concat @makeCode("import "), @variable.compileToFragments(o), @makeCode(" from "), @source.compileToFragments(o)
 
 #### Block
 
