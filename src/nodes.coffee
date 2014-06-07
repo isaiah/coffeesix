@@ -1178,7 +1178,7 @@ exports.Assign = class Assign extends Base
   # has not been seen yet within the current scope, declare it.
   compileNode: (o) ->
     if isValue = @variable instanceof Value
-      return @compilePatternMatch o if @variable.isArray() or @variable.isObject()
+      return @compilePatternMatch6 o if @variable.isArray() or @variable.isObject()
       return @compileSplice       o if @variable.isSplice()
       return @compileConditional  o if @context in ['||=', '&&=', '?=']
       return @compileSpecialMath  o if @context in ['**=', '//=', '%%=']
@@ -1204,6 +1204,14 @@ exports.Assign = class Assign extends Base
     return (compiledName.concat [val]) if @context is 'class'
     answer = compiledName.concat @makeCode(" #{ @context or '=' } "), val
     if o.level <= LEVEL_LIST then answer else @wrapInBraces answer
+
+  # Compile to ES6 destructuring assignment
+  compilePatternMatch6: (o) ->
+    answer = [@makeCode("var ")]
+    answer = answer.concat @variable.compileToFragments o, LEVEL_LIST
+    val = @value.compileToFragments o, LEVEL_LIST
+    answer.concat @makeCode(" #{ @context or '=' } "), val
+
 
   # Brief implementation of recursive pattern matching, when assigning array or
   # object literals to a value. Peeks at their properties to assign inner names.

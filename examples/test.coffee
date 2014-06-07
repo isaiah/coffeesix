@@ -1,22 +1,31 @@
 jison = require "jison"
 fs = require("fs")
 
-a = ->
-  console.info "hello"
+[a, b] = [1,2,3]
 
-exports.b = "foo"
+{ op: a, lhs: { op: b }, rhs: c } = getASTNode()
+g = ({name: x}) ->
+  console.log(x)
 
-exports.fun = (z) ->
-  z
+g(name: 5)
 
-c = "#{b} bar"
 
-class Greet
-  constructor: (world) ->
-    @world = world
-
-  hello: (x) ->
-    "#{x} #{@world}"
-
-  @bye: (y) ->
-    "#{y} #{world}"
+#a = ->
+#  console.info "hello"
+#
+#exports.b = "foo"
+#
+#exports.fun = (z) ->
+#  z
+#
+#c = "#{b} bar"
+#
+#class Greet
+#  constructor: (world) ->
+#    @world = world
+#
+#  hello: (x) ->
+#    "#{x} #{@world}"
+#
+#  @bye: (y) ->
+#    "#{y} #{world}"
