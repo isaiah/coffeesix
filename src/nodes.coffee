@@ -1034,30 +1034,30 @@ exports.Class = class Class extends Base
   addProperties: (node, name, o) ->
     props = node.base.properties[..]
     exprs = while assign = props.shift()
-      if assign instanceof Assign
-        base = assign.variable.base
-        #delete assign.context
-        assign.context = 'class'
-        func = assign.value
-        if base.value is 'constructor'
-          if @ctor
-            assign.error 'cannot define more than one constructor in a class'
-          if func.bound
-            assign.error 'cannot define a constructor as a bound function'
-          if func instanceof Code
-            assign = @ctor = func
-          else
-            @externalCtor = o.classScope.freeVariable 'class'
-            assign = new Assign new Literal(@externalCtor), func
+      base = assign.variable.base
+      func = assign.value
+      if base.value is 'constructor'
+        if @ctor
+          assign.error 'cannot define more than one constructor in a class'
+        if func.bound
+          assign.error 'cannot define a constructor as a bound function'
+        if func instanceof Code
+          @ctor = func
+          func.name = base.value
         else
-          if assign.variable.this
-            func.static = yes
-          else
-            assign.variable = base
-            if func instanceof Code and func.bound
-              @boundFuncs.push base
-              func.bound = no
-      assign
+          @externalCtor = o.classScope.freeVariable 'class'
+      else
+        if assign.variable.this
+          func.static = yes
+          func.name = assign.variable.properties[0].name.value
+        else
+          func.name = base.value
+          if func instanceof Code and func.bound
+            @boundFuncs.push base
+            func.bound = no
+
+      func.class = yes
+      func
     compact exprs
 
   # Walk the body of the class, looking for prototype properties to be converted
@@ -1120,10 +1120,10 @@ exports.Class = class Class extends Base
     @hoistDirectivePrologue()
     @setContext name
     @walkBody name, o
-    @ensureConstructor name
+    #@ensureConstructor name
     @addBoundFunctions o
     @body.spaced = yes
-    @body.expressions.push lname
+    #@body.expressions.push lname
 
     if @parent
       superClass = new Literal o.classScope.freeVariable 'super', no
@@ -1337,7 +1337,7 @@ exports.Code = class Code extends Base
 
   children: ['params', 'body']
 
-  isStatement: -> !!@ctor
+  isStatement: -> !!@class
 
   jumps: NO
 
@@ -1400,10 +1400,12 @@ exports.Code = class Code extends Base
       node.error "multiple parameters named '#{name}'" if name in uniqs
       uniqs.push name
     @body.makeReturn() unless wasEmpty or @noReturn
-    if @ctor
-      code = 'contructor'
-    else if @static
-      code = ''
+    if @class
+      if @static
+        code = 'static '
+      else
+        code = ''
+      code += @name
     else
       code = 'function'
     code  += '('
@@ -1415,7 +1417,7 @@ exports.Code = class Code extends Base
     answer = answer.concat(@makeCode("\n"), @body.compileWithDeclarations(o), @makeCode("\n#{@tab}")) unless @body.isEmpty()
     answer.push @makeCode '}'
 
-    return [@makeCode(@tab), answer...] if @ctor
+    return [@makeCode(@tab), answer...] if @class
     if @front or (o.level >= LEVEL_ACCESS) then @wrapInBraces answer else answer
 
   eachParamName: (iterator) ->
