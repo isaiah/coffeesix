@@ -4,7 +4,10 @@ fs = require("fs")
 a = ->
   console.info "hello"
 
-b = "foo"
+exports.b = "foo"
+
+exports.fun = (z) ->
+  z
 
 c = "#{b} bar"
 

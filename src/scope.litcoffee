@@ -115,3 +115,12 @@ of this scope.
       assignedVariables: ->
         "#{v.name} = #{v.type.value}" for v in @variables when v.type.assigned
 
+Does this scope have any exported variables?
+
+      hasExports: ->
+        !!@exportedVariables().length
+
+Return the list of variables exported in this scope.
+
+      exportedVariables: ->
+        v.name for v in @variables when v.type is 'export'

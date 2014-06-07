@@ -362,10 +362,12 @@ exports.Block = class Block extends Base
       [fragments, @spaced] = [@compileNode(o), spaced]
       @expressions = rest
     post = @compileNode o
+    final = null
     {scope} = o
     if scope.expressions is this
       declars = o.scope.hasDeclarations()
       assigns = scope.hasAssignments
+      hasExports = o.scope.hasExports()
       if declars or assigns
         fragments.push @makeCode '\n' if i
         fragments.push @makeCode "#{@tab}var "
@@ -374,10 +376,17 @@ exports.Block = class Block extends Base
         if assigns
           fragments.push @makeCode ",\n#{@tab + TAB}" if declars
           fragments.push @makeCode scope.assignedVariables().join(",\n#{@tab + TAB}")
+        if hasExports
+          final = @makeCode scope.exportedVariables().join(', ')
         fragments.push @makeCode ";\n#{if @spaced then '\n' else ''}"
       else if fragments.length and post.length
         fragments.push @makeCode "\n"
-    fragments.concat post
+    fragments = fragments.concat post
+    if final
+      fragments.push @makeCode "\nexport {\n"
+      fragments.push final
+      fragments.push @makeCode "\n};\n"
+    fragments
 
   # Wrap up the given nodes as a **Block**, unless it already happens
   # to be one.
@@ -1178,7 +1187,10 @@ exports.Assign = class Assign extends Base
       varBase = @variable.unwrapAll()
       unless varBase.isAssignable()
         @variable.error "\"#{@variable.compile o}\" cannot be assigned"
-      unless varBase.hasProperties?()
+      if varBase.hasProperties?()
+        if varBase.base.value is 'exports'
+          o.scope.add varBase.properties[0].name.value, 'export'
+      else
         if @param
           o.scope.add name, 'var'
         else
@@ -1188,7 +1200,7 @@ exports.Assign = class Assign extends Base
       @value.name  = match[3] ? match[4] ? match[5]
     val = @value.compileToFragments o, LEVEL_LIST
     return (compiledName.concat @makeCode(": "), val) if @context is 'object'
-    return (compiledName.concat @makeCode(""), val) if @context is 'class'
+    return (compiledName.concat [val]) if @context is 'class'
     answer = compiledName.concat @makeCode(" #{ @context or '=' } "), val
     if o.level <= LEVEL_LIST then answer else @wrapInBraces answer
 
