@@ -325,6 +325,7 @@ exports.Block = class Block extends Base
   # It would be better not to generate them in the first place, but for now,
   # clean up obvious double-parentheses.
   compileRoot: (o) ->
+    o.bare    = true
     o.indent  = if o.bare then '' else TAB
     o.level   = LEVEL_TOP
     @spaced   = yes
@@ -377,7 +378,7 @@ exports.Block = class Block extends Base
           fragments.push @makeCode ",\n#{@tab + TAB}" if declars
           fragments.push @makeCode scope.assignedVariables().join(",\n#{@tab + TAB}")
         if hasExports
-          final = @makeCode scope.exportedVariables().join(', ')
+          final = @makeCode "#{@tab + TAB}#{scope.exportedVariables().join(', ')}"
         fragments.push @makeCode ";\n#{if @spaced then '\n' else ''}"
       else if fragments.length and post.length
         fragments.push @makeCode "\n"
