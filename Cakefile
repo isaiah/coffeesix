@@ -30,6 +30,11 @@ build = (cb) ->
   files = ('src/' + file for file in files when file.match(/\.(lit)?coffee$/))
   run ['-c', '-o', 'lib/coffee-script'].concat(files), cb
 
+buildTests = (cb) ->
+  files = fs.readdirSync 'test'
+  files = ('test/' + file for file in files when file.match(/\.coffee$/))
+  run ['-c', '-o', 'target'].concat(files), cb
+
 # Run a CoffeeScript through our node/coffee interpreter.
 run = (args, cb) ->
   proc =         spawn 'node', ['bin/coffee'].concat(args)
@@ -287,8 +292,8 @@ runTests = (CoffeeScript) ->
   return !failures.length
 
 
-task 'test', 'run the CoffeeScript language test suite', ->
-  runTests CoffeeScript
+task 'test', 'run the CoffeeScript language test suite', buildTests
+  #runTests CoffeeScript
 
 
 task 'test:browser', 'run the test suite against the merged browser script', ->
