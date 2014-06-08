@@ -1390,7 +1390,7 @@ exports.Code = class Code extends Base
     params = []
     exprs  = []
     for param in @params when param not instanceof Expansion
-      o.scope.parameter param.asReference o
+      #o.scope.parameter param.asReference o
       params.push param
       #for param in @params when param.splat or param instanceof Expansion
       #  for {name: p} in @params when param not instanceof Expansion
@@ -1464,7 +1464,11 @@ exports.Param = class Param extends Base
   children: ['name', 'value']
 
   compileToFragments: (o) ->
-    @name.compileToFragments o, LEVEL_LIST
+    compiledName = @name.compileToFragments o, LEVEL_LIST
+    if @value?
+      compiledName.push @makeCode(' = ')
+      compiledName = compiledName.concat @value.compileToFragments o, LEVEL_LIST
+    compiledName
 
   asReference: (o) ->
     return @reference if @reference
