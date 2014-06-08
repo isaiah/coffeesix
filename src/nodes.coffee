@@ -681,13 +681,16 @@ exports.Call = class Call extends Base
   # Compile a vanilla function call.
   compileNode: (o) ->
     @variable?.front = @front
-    compiledArray = Splat.compileSplattedArray o, @args, true
-    if compiledArray.length
-      return @compileSplat o, compiledArray
+    #compiledArray = Splat.compileSplattedArray o, @args, true
+    #if compiledArray.length
+    #  return @compileSplat o, compiledArray
     compiledArgs = []
     for arg, argIndex in @args
       if argIndex then compiledArgs.push @makeCode ", "
+      if arg instanceof Splat
+        compiledArgs.push @makeCode('...')
       compiledArgs.push (arg.compileToFragments o, LEVEL_LIST)...
+      compiledArgs
 
     fragments = []
     if @isSuper
@@ -1468,6 +1471,8 @@ exports.Param = class Param extends Base
     if @value?
       compiledName.push @makeCode(' = ')
       compiledName = compiledName.concat @value.compileToFragments o, LEVEL_LIST
+    if @splat
+      compiledName.unshift @makeCode('...')
     compiledName
 
   asReference: (o) ->

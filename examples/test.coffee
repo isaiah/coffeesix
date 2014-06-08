@@ -9,9 +9,16 @@ g = ({name: x}) ->
 
 g(name: 5)
 
-
 a = (w = "world") ->
   console.info "hello, #{w}!"
+
+f = (x, y...) ->
+  x * y.length
+
+f2 = (x,y,z) ->
+  x + y + z
+
+f2(1, [2,3]...)
 #
 #exports.b = "foo"
 #
