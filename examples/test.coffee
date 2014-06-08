@@ -10,8 +10,8 @@ g = ({name: x}) ->
 g(name: 5)
 
 
-#a = ->
-#  console.info "hello"
+a = (w = "world") ->
+  console.info "hello, #{w}!"
 #
 #exports.b = "foo"
 #

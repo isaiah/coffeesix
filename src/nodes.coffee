@@ -1391,27 +1391,29 @@ exports.Code = class Code extends Base
     exprs  = []
     for param in @params when param not instanceof Expansion
       o.scope.parameter param.asReference o
-    for param in @params when param.splat or param instanceof Expansion
-      for {name: p} in @params when param not instanceof Expansion
-        if p.this then p = p.properties[0].name
-        if p.value then o.scope.add p.value, 'var', yes
-      splats = new Assign new Value(new Arr(p.asReference o for p in @params)),
-                          new Value new Literal 'arguments'
-      break
-    for param in @params
-      if param.isComplex()
-        val = ref = param.asReference o
-        val = new Op '?', ref, param.value if param.value
-        exprs.push new Assign new Value(param.name), val, '=', param: yes
-      else
-        ref = param
-        if param.value
-          lit = new Literal ref.name.value + ' == null'
-          val = new Assign new Value(param.name), param.value, '='
-          exprs.push new If lit, val
-      params.push ref unless splats
+      params.push param
+      #for param in @params when param.splat or param instanceof Expansion
+      #  for {name: p} in @params when param not instanceof Expansion
+      #    if p.this then p = p.properties[0].name
+      #    if p.value then o.scope.add p.value, 'var', yes
+      #  splats = new Assign new Value(new Arr(p.asReference o for p in @params)),
+      #                      new Value new Literal 'arguments'
+      #  break
+      #for param in @params
+      #  if param.isComplex()
+      #    val = ref = param.asReference o
+      #    val = new Op '?', ref, param.value if param.value
+      #    exprs.push new Assign new Value(param.name), val, '=', param: yes
+      #  else
+      #    ref = param
+      #    if param.value
+      #      lit = new Literal ref.name.value + ' == null'
+      #      val = new Assign new Value(param.name), param.value, '='
+      #      exprs.push new If lit, val
+      #      #params.push ref unless splats
+      #  params.push ref
     wasEmpty = @body.isEmpty()
-    exprs.unshift splats if splats
+    #exprs.unshift splats if splats
     @body.expressions.unshift exprs... if exprs.length
     for p, i in params
       params[i] = p.compileToFragments o
