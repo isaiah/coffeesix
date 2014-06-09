@@ -1,4 +1,5 @@
 jison = require "jison"
+{Parser, Abc} = require 'jison'
 fs = require("fs")
 
 [a, b] = [1,2,3]

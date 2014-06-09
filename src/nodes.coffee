@@ -952,10 +952,10 @@ exports.Obj = class Obj extends Base
         prop.variable.error 'Invalid object key'
       if prop instanceof Value and prop.this
         prop = new Assign prop.properties[0].name, prop, 'object'
-      if prop not instanceof Comment
-        if prop not instanceof Assign
-          prop = new Assign prop, prop, 'object'
-        (prop.variable.base or prop.variable).asKey = yes
+        #if prop not instanceof Comment
+        #if prop not instanceof Assign
+          #prop = new Assign prop, prop, 'object'
+          #(prop.variable.base or prop.variable).asKey = yes
       if indent then answer.push @makeCode indent
       answer.push prop.compileToFragments(o, LEVEL_TOP)...
       if join then answer.push @makeCode join
