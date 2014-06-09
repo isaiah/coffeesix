@@ -129,6 +129,11 @@ grammar =
     o 'IDENTIFIER',                             -> new Literal $1
   ]
 
+  TemplateString: [
+    o 'TEMPLATE_STRING',                        -> new TemplateString $1
+  ]
+
+
   # Alphanumerics are separated from the other **Literal** matchers because
   # they can also serve as keys in object literals.
   AlphaNumeric: [
@@ -258,6 +263,7 @@ grammar =
   # as functions, indexed into, named as a class, etc.
   Value: [
     o 'Assignable'
+    o 'TemplateString'
     o 'Literal',                                -> new Value $1
     o 'Parenthetical',                          -> new Value $1
     o 'Range',                                  -> new Value $1

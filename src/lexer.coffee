@@ -194,7 +194,8 @@ exports.Lexer = class Lexer
     return 0 unless string
     trimmed = @removeNewlines string[1...-1]
     if quote is '"' and 0 < string.indexOf '#{', 1
-      @interpolateString trimmed, strOffset: 1, lexedLength: string.length
+      @token "TEMPLATE_STRING", @escapeLines(trimmed), 0, string.length
+      #@interpolateString trimmed, strOffset: 1, lexedLength: string.length
     else
       @token 'STRING', quote + @escapeLines(trimmed) + quote, 0, string.length
     if octalEsc = /^(?:\\.|[^\\])*\\(?:0[0-7]|[1-7])/.test string
