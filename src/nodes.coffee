@@ -395,21 +395,6 @@ exports.Block = class Block extends Base
     return nodes[0] if nodes.length is 1 and nodes[0] instanceof Block
     new Block nodes
 
-#### Template String
-
-# Template strings provide syntactic sugar for constructing strings.
-# This is similar to string interpolation features in Perl, Python
-# and more. Optionally, a tag can be added to allow the string construction
-# to be customized, avoiding injection attacks or constructing higher
-# level data structures from string contents.
-
-exports.TemplateString = class TemplateString extends Base
-  contructor: (@value) ->
-
-  compileNode: (o) ->
-    [@makeCode '`', @makeCode @value, @makeCode '`']
-
-
 #### Literal
 
 # Literals are static values that can be passed through directly into

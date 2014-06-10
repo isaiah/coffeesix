@@ -194,7 +194,7 @@ exports.Lexer = class Lexer
     return 0 unless string
     trimmed = @removeNewlines string[1...-1]
     if quote is '"' and 0 < string.indexOf '#{', 1
-      @token "TEMPLATE_STRING", @escapeLines(trimmed), 0, string.length
+      @token "STRING", '`' + @escapeLines(@replaceSharp(trimmed)) + '`', 0, string.length
       #@interpolateString trimmed, strOffset: 1, lexedLength: string.length
     else
       @token 'STRING', quote + @escapeLines(trimmed) + quote, 0, string.length
@@ -704,6 +704,10 @@ exports.Lexer = class Lexer
     else
       str.replace /\s*\n\s*/g, ' '
 
+  # Convert '#{' to '${' for ES6 template string
+  replaceSharp: (str) ->
+    str = str.replace /#\{/, '${'
+
   # Constructs a string token by escaping quotes and newlines.
   makeString: (body, quote, heredoc) ->
     return quote + quote unless body
@@ -886,7 +890,7 @@ NOT_SPACED_REGEX = NOT_REGEX.concat ')', '}', 'THIS', 'IDENTIFIER', 'STRING', ']
 # Tokens which could legitimately be invoked or indexed. An opening
 # parentheses or bracket following these tokens will be recorded as the start
 # of a function invocation or indexing operation.
-CALLABLE  = ['IDENTIFIER', 'STRING', 'REGEX', ')', ']', '}', '?', '::', '@', 'THIS', 'SUPER']
+CALLABLE  = ['IDENTIFIER', 'STRING', 'TEMPLATE_STRING', 'REGEX', ')', ']', '}', '?', '::', '@', 'THIS', 'SUPER']
 INDEXABLE = CALLABLE.concat 'NUMBER', 'BOOL', 'NULL', 'UNDEFINED'
 
 # Tokens that, when immediately preceding a `WHEN`, indicate that the `WHEN`
